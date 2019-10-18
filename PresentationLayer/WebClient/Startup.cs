@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Hangfire;
+﻿using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,9 +47,17 @@ namespace WebClient
 
             loggerFactory.AddLog4Net("Configs/log4net.config");
 
-            app.UseHangfireServer();
+            string HangfireServer = Configuration.GetConnectionString("Hangfire.Server");
 
-            //app.UseHangfireDashboard("/hangfire");
+            if (HangfireServer == "True")
+            {
+                app.UseHangfireServer();
+
+                app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+                {
+                    Authorization = new[] { new Filters.HangfireDashboardAuthorizeFilter() }
+                });
+            }
 
             app.UseMvc();
 
