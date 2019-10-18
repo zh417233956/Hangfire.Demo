@@ -49,10 +49,10 @@ namespace WebClient
 
             string HangfireServer = Configuration.GetConnectionString("Hangfire.Server");
 
+            app.UseHangfireServer();
+
             if (HangfireServer == "True")
             {
-                app.UseHangfireServer();
-
                 app.UseHangfireDashboard("/hangfire", new DashboardOptions()
                 {
                     Authorization = new[] { new Filters.HangfireDashboardAuthorizeFilter() }
